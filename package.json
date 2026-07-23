@@ -1,0 +1,82 @@
+{
+  "name": "@blyou/vite-plugin-uni-launcher",
+  "version": "0.0.0",
+  "description": "A Vite plugin that auto-launches the matching mini-program devtool after a uni-app build.",
+  "keywords": [
+    "devtool",
+    "launcher",
+    "miniprogram",
+    "uni-app"
+  ],
+  "homepage": "https://github.com/blyou/vite-plugin-uni-launcher#readme",
+  "bugs": {
+    "url": "https://github.com/blyou/vite-plugin-uni-launcher/issues"
+  },
+  "license": "MIT",
+  "author": "blyou <youbolincode@163.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blyou/vite-plugin-uni-launcher.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit",
+    "release": "bumpp",
+    "prepublishOnly": "pnpm run build",
+    "lint": "run-s lint:*",
+    "lint:oxlint": "oxlint . --fix",
+    "lint:eslint": "eslint . --fix --cache",
+    "format": "oxfmt src/",
+    "git:hooks": "pnpm simple-git-hooks",
+    "taze": "pnpx taze -I"
+  },
+  "dependencies": {
+    "minidev": "^2.2.5",
+    "tt-ide-cli": "^0.1.33",
+    "zx": "^8.8.5"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.1",
+    "@commitlint/config-conventional": "^21.2.0",
+    "@commitlint/types": "^21.2.0",
+    "@types/node": "^26.1.1",
+    "@typescript/native-preview": "7.0.0-dev.20260707.2",
+    "@vue/eslint-config-typescript": "^14.9.0",
+    "bumpp": "^12.0.0",
+    "eslint": "^10.7.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-oxlint": "^1.75.0",
+    "eslint-plugin-vue": "^10.10.0",
+    "lint-staged": "^17.1.1",
+    "npm-run-all2": "^9.0.2",
+    "oxfmt": "^0.60.0",
+    "oxlint": "^1.75.0",
+    "simple-git-hooks": "^2.13.1",
+    "tsdown": "^0.22.13",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.10"
+  },
+  "peerDependencies": {
+    "vite": ">=5.0.0 <8.0.0"
+  },
+  "packageManager": "pnpm@11.16.0+sha512.b767e9a98fc87aec0f42daefcd0e84941c2cdb45d73c4e1e68860fb2bdfdbe032ab592105479e5e05c237f740c8a5ffdbbb52385797ddc2296745a1bbb883e8d"
+}
