@@ -1,6 +1,6 @@
 {
   "name": "@blyou/vite-plugin-uni-launcher",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A Vite plugin that auto-launches the matching mini-program devtool after a uni-app build.",
   "keywords": [
     "devtool",
