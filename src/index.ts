@@ -1,6 +1,7 @@
-import { normalizePath, type Plugin } from 'vite'
+import type { Plugin } from 'vite'
+import pc from 'picocolors'
 import { existsSync } from 'node:fs'
-import path, { resolve } from 'node:path'
+import { dirname } from 'node:path'
 import { $ } from 'zx'
 import { getAdapter, registerAdapter } from './core/registry'
 import type { LauncherAdapter, UniLauncherOptions } from './index.type'
@@ -31,8 +32,9 @@ if (process.platform === 'win32') {
  * 本函数不感知任何具体开发工具——所有工具差异都封在 LauncherAdapter 实现里。
  */
 export default function VitePlugin(options: UniLauncherOptions = {}): Plugin {
-  options.adapters?.forEach(adapter => registerAdapter(adapter))
   const platform = process.env.UNI_PLATFORM ?? ''
+
+  options.adapters?.forEach(adapter => registerAdapter(adapter))
   const adapter = getAdapter(platform)
 
   let isHbx: boolean
@@ -58,9 +60,14 @@ export default function VitePlugin(options: UniLauncherOptions = {}): Plugin {
     // $.verbose = true
     try {
       await options.adapter.runOpenScript({ $, ...options })
-      process.stdout.write(`${PREFIX} 已用${options.adapter.name}打开项目：${options.project}\n`)
+      process.stdout.write(
+        `${pc.cyan(PREFIX)} ${pc.green('已用')}${pc.bold(options.adapter.name)}` +
+          `${pc.green('打开项目：')}${pc.underline(options.project)}\n`,
+      )
     } catch (err) {
-      console.error(`${PREFIX} 启动${options.adapter.name}失败：${(err as Error).message}`)
+      console.error(
+        `${pc.cyan(PREFIX)} ${pc.red(`启动${pc.bold(options.adapter.name)}失败：${(err as Error).message}`)}`,
+      )
     }
   }
 
@@ -69,14 +76,18 @@ export default function VitePlugin(options: UniLauncherOptions = {}): Plugin {
     if (isHbx || !enabled || opened || !adapter) return
     if (!appPath) {
       console.warn(
-        `${PREFIX} 未找到${adapter.name}，已跳过自动打开。` +
-          `请确认已安装该工具，或通过 ${adapter.envKey} 环境变量指定工具路径。`,
+        `${pc.cyan(PREFIX)} ${pc.yellow(
+          `未找到${pc.bold(adapter.name)}，已跳过自动打开。` +
+            `请确认已安装该工具，或通过 ${pc.bold(adapter.envKey)} 环境变量指定工具路径。`,
+        )}`,
       )
       return
     }
     if (!existsSync(projectPath)) {
       if (Date.now() - waitStart > maxWait) {
-        console.warn(`${PREFIX} 等待项目资源超时（${maxWait}ms），未找到：${projectPath}`)
+        console.warn(
+          `${pc.cyan(PREFIX)} ${pc.yellow(`等待项目资源超时（${maxWait}ms），未找到：${pc.underline(projectPath)}`)}`,
+        )
         return
       }
       setTimeout(() => tryOpen(waitStart), 1000)
@@ -86,7 +97,7 @@ export default function VitePlugin(options: UniLauncherOptions = {}): Plugin {
     await openWith({
       adapter,
       appPath,
-      appDir: path.dirname(appPath),
+      appDir: dirname(appPath),
       cliName: adapter.cliName || '',
       project: projectPath,
     })
@@ -98,10 +109,8 @@ export default function VitePlugin(options: UniLauncherOptions = {}): Plugin {
       return enabled
     },
     configResolved(config) {
-      isHbx = normalizePath(config.root) !== normalizePath(process.cwd())
-      const distMode = config.mode === 'development' ? 'dev' : 'build'
-      const subDir = adapter?.platform ?? platform
-      projectPath = resolve(config.root, 'dist', distMode, subDir)
+      isHbx = config.define?.['process.env.RUN_BY_HBUILDERX']
+      projectPath = config.build.outDir
     },
     closeBundle() {
       tryOpen()

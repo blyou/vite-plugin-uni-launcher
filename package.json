@@ -51,6 +51,7 @@
   },
   "dependencies": {
     "minidev": "^2.2.5",
+    "picocolors": "^1.1.1",
     "tt-ide-cli": "^0.1.33",
     "zx": "^8.8.5"
   },

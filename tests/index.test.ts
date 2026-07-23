@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { resolve } from 'node:path'
 import type { LauncherAdapter, OpenScriptContext } from '../src/index.type'
 import type { PathLike } from 'node:fs'
 
@@ -23,7 +22,7 @@ import { registerAdapter } from '../src/core/registry'
 type TestPlugin = {
   name: string
   apply: () => boolean
-  configResolved: (config: { root: string; mode: string }) => void
+  configResolved: (config: { build: { outDir: string } }) => void
   closeBundle: () => void | Promise<void>
 }
 
@@ -81,13 +80,13 @@ describe('VitePlugin', () => {
     const plugin = VitePlugin({ maxWait: 1000 }) as unknown as TestPlugin
     expect(plugin.apply()).toBe(true)
 
-    // root 与 process.cwd() 一致时 isHbx 为 false，才会真正触发打开
-    plugin.configResolved({ root: process.cwd(), mode: 'development' } as any)
+    // projectPath 取自 config.build.outDir
+    plugin.configResolved({ build: { outDir: '/fake/project' } })
     await plugin.closeBundle()
 
     expect(fakeAdapter.runOpenScript).toHaveBeenCalledTimes(1)
     const ctx = (fakeAdapter.runOpenScript as ReturnType<typeof vi.fn>).mock.calls[0][0]
     expect(ctx.appPath).toBe('/fake/app')
-    expect(ctx.project).toBe(resolve(process.cwd(), 'dist', 'dev', 'mp-fake'))
+    expect(ctx.project).toBe('/fake/project')
   })
 })

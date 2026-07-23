@@ -16,13 +16,13 @@
 npm
 
 ```bash
-npm i -D vite-plugin-uni-launcher
+npm i -D @blyou/vite-plugin-uni-launcher
 ```
 
 pnpm
 
 ```bash
-pnpm add -D vite-plugin-uni-launcher
+pnpm add -D @blyou/vite-plugin-uni-launcher
 ```
 
 ## 快速上手
@@ -33,7 +33,7 @@ pnpm add -D vite-plugin-uni-launcher
 ```ts
 // vite.config.ts
 import { defineConfig } from 'vite'
-import UniLauncher from 'vite-plugin-uni-launcher'
+import UniLauncher from '@blyou/vite-plugin-uni-launcher'
 
 export default defineConfig({
   plugins: [UniLauncher()],
@@ -90,10 +90,10 @@ UniLauncher({
 
 ## 自定义适配器（扩展点）
 
-实现 `LauncherAdapter` 接口，再通过 `adapters` 选项注册即可，无需改动库源码：
+实现 `LauncherAdapter` 接口，再通过 `adapters` 选项注册即可：
 
 ```ts
-import type { LauncherAdapter } from 'vite-plugin-uni-launcher'
+import type { LauncherAdapter } from '@blyou/vite-plugin-uni-launcher'
 
 const myAdapter: LauncherAdapter = {
   platform: 'mp-myplatform',
